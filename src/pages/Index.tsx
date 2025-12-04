@@ -9,23 +9,35 @@ import LoadingScreen from '@/components/LoadingScreen';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
   const [balance, setBalance] = useState(1000);
   const [level, setLevel] = useState(1);
   const [totalGames, setTotalGames] = useState(2);
   const [winRate, setWinRate] = useState(0);
   const [activeTab, setActiveTab] = useState('games');
+  const [onlineUsers, setOnlineUsers] = useState(0);
 
   const topPlayers = [
     { id: 1, name: 'Xyе', level: 1, balance: 1000, wins: 0, avatar: 'X' },
     { id: 2, name: 'MALIKOVVV', level: 1, balance: 0, wins: 0, avatar: 'M' }
   ];
 
+  useEffect(() => {
+    const updateOnlineUsers = () => {
+      setOnlineUsers(Math.floor(Math.random() * 50) + 10);
+    };
+    updateOnlineUsers();
+    const interval = setInterval(updateOnlineUsers, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   const games = [
     { 
       id: 'slots', 
       name: 'Слоты', 
       description: 'Крути барабаны и выигрывай!',
-      online: 1234,
+      online: onlineUsers,
       status: 'online',
       icon: '🎰',
       bg: 'from-red-900/40 to-red-800/40'
@@ -89,21 +101,48 @@ const Index = () => {
             </nav>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3 bg-card border border-border px-4 py-2 rounded-lg">
-              <Avatar className="h-8 w-8 border-2 border-primary">
-                <AvatarFallback className="bg-primary text-white text-sm font-bold">П</AvatarFallback>
-              </Avatar>
-              <div className="hidden sm:block">
-                <p className="text-sm font-medium">Пупс</p>
-                <div className="flex items-center gap-1 text-primary text-xs font-bold">
-                  <Icon name="Coins" size={12} />
-                  {balance.toLocaleString()}
+            {isLoggedIn ? (
+              <>
+                <div className="flex items-center gap-3 bg-card border border-border px-4 py-2 rounded-lg">
+                  <Avatar className="h-8 w-8 border-2 border-primary">
+                    <AvatarFallback className="bg-primary text-white text-sm font-bold">
+                      {userName.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="hidden sm:block">
+                    <p className="text-sm font-medium">{userName}</p>
+                    <div className="flex items-center gap-1 text-primary text-xs font-bold">
+                      <Icon name="Coins" size={12} />
+                      {balance.toLocaleString()}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <Button className="bg-white text-black hover:bg-white/90 font-medium">
-              Sign out
-            </Button>
+                <Button 
+                  className="bg-white text-black hover:bg-white/90 font-medium"
+                  onClick={() => {
+                    setIsLoggedIn(false);
+                    setUserName('');
+                    toast.success('Вы вышли из аккаунта');
+                  }}
+                >
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <Button 
+                className="bg-primary hover:bg-primary/90 font-medium"
+                onClick={() => {
+                  const name = prompt('Введите ваше имя:');
+                  if (name && name.trim()) {
+                    setUserName(name.trim());
+                    setIsLoggedIn(true);
+                    toast.success(`Добро пожаловать, ${name}!`);
+                  }
+                }}
+              >
+                Войти
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -112,7 +151,9 @@ const Index = () => {
         <div className="container mx-auto px-4 py-6 space-y-6 animate-fade-in">
           <Card className="bg-gradient-to-r from-primary to-orange-600 border-0 p-8 text-white relative overflow-hidden">
             <div className="relative z-10">
-              <h2 className="text-4xl font-bold mb-2">Привет, Пупс! 👋</h2>
+              <h2 className="text-4xl font-bold mb-2">
+                {isLoggedIn ? `Привет, ${userName}! 👋` : 'Привет! 👋'}
+              </h2>
               <p className="text-white/90 text-lg">Готов к новым победам?</p>
             </div>
             <Button className="absolute right-8 top-1/2 -translate-y-1/2 bg-white text-primary hover:bg-white/90 font-bold">
@@ -202,7 +243,7 @@ const Index = () => {
                     {game.status === 'online' && (
                       <div className="flex items-center gap-2 text-green-500 text-sm">
                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <span>{game.online} онлайн</span>
+                        <span>{game.online > 0 ? `${game.online} онлайн` : '0 онлайн'}</span>
                       </div>
                     )}
                     {game.status === 'dev' && (
