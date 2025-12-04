@@ -6,6 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
 import LoadingScreen from '@/components/LoadingScreen';
+import SlotsGame from '@/components/games/SlotsGame';
+import PokerGame from '@/components/games/PokerGame';
+import RouletteGame from '@/components/games/RouletteGame';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +20,7 @@ const Index = () => {
   const [winRate, setWinRate] = useState(0);
   const [activeTab, setActiveTab] = useState('games');
   const [onlineUsers, setOnlineUsers] = useState(0);
+  const [activeGame, setActiveGame] = useState<'slots' | 'poker' | 'roulette' | null>(null);
 
   const topPlayers = [
     { id: 1, name: 'Xyе', level: 1, balance: 1000, wins: 0, avatar: 'X' },
@@ -45,18 +49,18 @@ const Index = () => {
     { 
       id: 'poker', 
       name: 'Покер', 
-      description: 'Скоро!',
-      online: 0,
-      status: 'dev',
+      description: 'Соревнуйся с дилером!',
+      online: Math.floor(onlineUsers * 0.6),
+      status: 'online',
       icon: '🃏',
       bg: 'from-blue-900/40 to-blue-800/40'
     },
     { 
       id: 'roulette', 
       name: 'Рулетка', 
-      description: 'Скоро!',
-      online: 0,
-      status: 'dev',
+      description: 'Ставь на цвет и выигрывай!',
+      online: Math.floor(onlineUsers * 0.4),
+      status: 'online',
       icon: '🎡',
       bg: 'from-purple-900/40 to-purple-800/40'
     }
@@ -149,17 +153,19 @@ const Index = () => {
 
       {activeTab === 'games' && (
         <div className="container mx-auto px-4 py-6 space-y-6 animate-fade-in">
-          <Card className="bg-gradient-to-r from-primary to-orange-600 border-0 p-8 text-white relative overflow-hidden">
-            <div className="relative z-10">
-              <h2 className="text-4xl font-bold mb-2">
-                {isLoggedIn ? `Привет, ${userName}! 👋` : 'Привет! 👋'}
-              </h2>
-              <p className="text-white/90 text-lg">Готов к новым победам?</p>
+          <Card className="bg-gradient-to-r from-primary to-orange-600 border-0 p-6 sm:p-8 text-white">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-2">
+                  {isLoggedIn ? `Привет, ${userName}! 👋` : 'Привет! 👋'}
+                </h2>
+                <p className="text-white/90 text-base sm:text-lg">Готов к новым победам?</p>
+              </div>
+              <Button className="bg-white text-primary hover:bg-white/90 font-bold whitespace-nowrap">
+                <Icon name="Gift" size={16} className="mr-2" />
+                Забрать бонус
+              </Button>
             </div>
-            <Button className="absolute right-8 top-1/2 -translate-y-1/2 bg-white text-primary hover:bg-white/90 font-bold">
-              <Icon name="Gift" size={16} className="mr-2" />
-              Забрать бонус
-            </Button>
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -234,6 +240,7 @@ const Index = () => {
               {games.map((game) => (
                 <Card 
                   key={game.id}
+                  onClick={() => setActiveGame(game.id)}
                   className={`bg-gradient-to-br ${game.bg} border-border hover:scale-105 transition-all cursor-pointer overflow-hidden relative`}
                 >
                   <div className="p-6">
@@ -245,11 +252,6 @@ const Index = () => {
                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                         <span>{game.online > 0 ? `${game.online} онлайн` : '0 онлайн'}</span>
                       </div>
-                    )}
-                    {game.status === 'dev' && (
-                      <Badge variant="secondary" className="bg-muted">
-                        В разработке
-                      </Badge>
                     )}
                   </div>
                 </Card>
@@ -418,6 +420,30 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {activeGame === 'slots' && (
+        <SlotsGame
+          balance={balance}
+          onBalanceChange={setBalance}
+          onClose={() => setActiveGame(null)}
+        />
+      )}
+
+      {activeGame === 'poker' && (
+        <PokerGame
+          balance={balance}
+          onBalanceChange={setBalance}
+          onClose={() => setActiveGame(null)}
+        />
+      )}
+
+      {activeGame === 'roulette' && (
+        <RouletteGame
+          balance={balance}
+          onBalanceChange={setBalance}
+          onClose={() => setActiveGame(null)}
+        />
+      )}
     </div>
   );
 };
