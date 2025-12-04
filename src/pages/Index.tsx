@@ -56,50 +56,53 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-border">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-6">
+      <header className="sticky top-0 z-40 bg-black border-b border-border">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-8">
             <img 
               src="https://cdn.poehali.dev/files/ced35bc8-a3ab-4ddd-914e-7bb8e252b7d9.png" 
               alt="SlotsFight" 
-              className="h-8 w-auto"
+              className="h-10 w-auto"
             />
-            <nav className="hidden md:flex items-center gap-4">
+            <nav className="flex items-center gap-1">
               <Button 
                 variant="ghost" 
-                className={activeTab === 'games' ? 'text-primary' : 'text-muted-foreground'}
+                className={`text-base font-medium hover:text-foreground ${activeTab === 'games' ? 'text-foreground' : 'text-muted-foreground'}`}
                 onClick={() => setActiveTab('games')}
               >
                 Игры
               </Button>
               <Button 
                 variant="ghost" 
-                className={activeTab === 'rating' ? 'text-primary' : 'text-muted-foreground'}
+                className={`text-base font-medium hover:text-foreground ${activeTab === 'rating' ? 'text-foreground' : 'text-muted-foreground'}`}
                 onClick={() => setActiveTab('rating')}
               >
                 Рейтинг
               </Button>
               <Button 
                 variant="ghost" 
-                className={activeTab === 'bonuses' ? 'text-primary' : 'text-muted-foreground'}
+                className={`text-base font-medium hover:text-foreground ${activeTab === 'bonuses' ? 'text-foreground' : 'text-muted-foreground'}`}
                 onClick={() => setActiveTab('bonuses')}
               >
-                Премущества
+                Преимущества
               </Button>
             </nav>
           </div>
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 bg-primary/20 px-3 py-2 rounded-lg">
-              <Icon name="Coins" size={20} className="text-primary" />
-              <span className="font-bold text-primary">{balance}</span>
-            </div>
-            <Button size="sm" className="bg-gradient-to-r from-primary to-red-600 hover:opacity-90">
-              Забрать бонус
-            </Button>
-            <Button variant="ghost" size="icon">
+            <div className="flex items-center gap-3 bg-card border border-border px-4 py-2 rounded-lg">
               <Avatar className="h-8 w-8 border-2 border-primary">
-                <AvatarFallback className="bg-primary text-white text-xs">X</AvatarFallback>
+                <AvatarFallback className="bg-primary text-white text-sm font-bold">П</AvatarFallback>
               </Avatar>
+              <div className="hidden sm:block">
+                <p className="text-sm font-medium">Пупс</p>
+                <div className="flex items-center gap-1 text-primary text-xs font-bold">
+                  <Icon name="Coins" size={12} />
+                  {balance.toLocaleString()}
+                </div>
+              </div>
+            </div>
+            <Button className="bg-white text-black hover:bg-white/90 font-medium">
+              Sign out
             </Button>
           </div>
         </div>
@@ -107,9 +110,15 @@ const Index = () => {
 
       {activeTab === 'games' && (
         <div className="container mx-auto px-4 py-6 space-y-6 animate-fade-in">
-          <Card className="bg-gradient-to-r from-primary to-orange-600 border-0 p-6 text-white">
-            <h2 className="text-3xl font-bold mb-2">Привет, Xyе! 👋</h2>
-            <p className="text-white/90">Готов к новым победам?</p>
+          <Card className="bg-gradient-to-r from-primary to-orange-600 border-0 p-8 text-white relative overflow-hidden">
+            <div className="relative z-10">
+              <h2 className="text-4xl font-bold mb-2">Привет, Пупс! 👋</h2>
+              <p className="text-white/90 text-lg">Готов к новым победам?</p>
+            </div>
+            <Button className="absolute right-8 top-1/2 -translate-y-1/2 bg-white text-primary hover:bg-white/90 font-bold">
+              <Icon name="Gift" size={16} className="mr-2" />
+              Забрать бонус
+            </Button>
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
