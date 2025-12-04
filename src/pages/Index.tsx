@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,8 +6,10 @@ import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const Index = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [balance, setBalance] = useState(10000);
   const [level, setLevel] = useState(5);
   const [experience, setExperience] = useState(65);
@@ -64,11 +66,22 @@ const Index = () => {
     toast.success(`Открыто! +${prize} монет!`);
   };
 
+  if (isLoading) {
+    return <LoadingScreen onLoadComplete={() => setIsLoading(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted to-background pb-20">
       {activeTab === 'home' && (
         <div className="animate-fade-in">
           <div className="bg-gradient-to-r from-primary to-secondary p-6 text-white">
+            <div className="flex items-center justify-center mb-4">
+              <img 
+                src="https://cdn.poehali.dev/files/ced35bc8-a3ab-4ddd-914e-7bb8e252b7d9.png" 
+                alt="SlotsFight" 
+                className="h-12 w-auto"
+              />
+            </div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <Avatar className="h-14 w-14 border-2 border-white">
