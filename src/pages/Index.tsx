@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Icon from '@/components/ui/icon';
 import { toast } from 'sonner';
 import LoadingScreen from '@/components/LoadingScreen';
+import AuthDialog from '@/components/AuthDialog';
 import SlotsGame from '@/components/games/SlotsGame';
 import PokerGame from '@/components/games/PokerGame';
 import RouletteGame from '@/components/games/RouletteGame';
@@ -21,6 +23,8 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('games');
   const [onlineUsers, setOnlineUsers] = useState(0);
   const [activeGame, setActiveGame] = useState<'slots' | 'poker' | 'roulette' | null>(null);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const navigate = useNavigate();
 
   const topPlayers = [
     { id: 1, name: 'Xyе', level: 1, balance: 1000, wins: 0, avatar: 'X' },
@@ -135,14 +139,7 @@ const Index = () => {
             ) : (
               <Button 
                 className="bg-primary hover:bg-primary/90 font-medium"
-                onClick={() => {
-                  const name = prompt('Введите ваше имя:');
-                  if (name && name.trim()) {
-                    setUserName(name.trim());
-                    setIsLoggedIn(true);
-                    toast.success(`Добро пожаловать, ${name}!`);
-                  }
-                }}
+                onClick={() => setShowAuthDialog(true)}
               >
                 Войти
               </Button>
@@ -169,7 +166,10 @@ const Index = () => {
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-card border-border p-4">
+            <Card 
+              onClick={() => navigate('/achievements')}
+              className="bg-card border-border p-4 cursor-pointer hover:scale-105 transition-all"
+            >
               <div className="flex items-center gap-3">
                 <div className="bg-primary/20 p-3 rounded-lg">
                   <Icon name="Trophy" size={28} className="text-primary" />
@@ -389,11 +389,26 @@ const Index = () => {
             </div>
             <div>
               <h4 className="font-bold mb-3">Игры</h4>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p>Слоты</p>
-                <p>Покер</p>
-                <p>Рулетка</p>
-                <p>Блэкджек</p>
+              <div className="space-y-2 text-sm">
+                <p 
+                  onClick={() => setActiveGame('slots')} 
+                  className="text-muted-foreground hover:text-primary cursor-pointer transition-colors"
+                >
+                  Слоты
+                </p>
+                <p 
+                  onClick={() => setActiveGame('poker')} 
+                  className="text-muted-foreground hover:text-primary cursor-pointer transition-colors"
+                >
+                  Покер
+                </p>
+                <p 
+                  onClick={() => setActiveGame('roulette')} 
+                  className="text-muted-foreground hover:text-primary cursor-pointer transition-colors"
+                >
+                  Рулетка
+                </p>
+                <p className="text-muted-foreground">Блэкджек (скоро)</p>
               </div>
             </div>
             <div>
@@ -407,11 +422,26 @@ const Index = () => {
             </div>
             <div>
               <h4 className="font-bold mb-3">Поддержка</h4>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p>FAQ</p>
-                <p>Правила</p>
-                <p>Конфиденциальность</p>
-                <p className="text-primary">Ответственная игра</p>
+              <div className="space-y-2 text-sm">
+                <p 
+                  onClick={() => navigate('/faq')} 
+                  className="text-muted-foreground hover:text-primary cursor-pointer transition-colors"
+                >
+                  FAQ
+                </p>
+                <p 
+                  onClick={() => navigate('/rules')} 
+                  className="text-muted-foreground hover:text-primary cursor-pointer transition-colors"
+                >
+                  Правила
+                </p>
+                <p 
+                  onClick={() => navigate('/privacy')} 
+                  className="text-muted-foreground hover:text-primary cursor-pointer transition-colors"
+                >
+                  Конфиденциальность
+                </p>
+                <p className="text-primary cursor-pointer">Ответственная игра</p>
               </div>
             </div>
           </div>
@@ -444,6 +474,16 @@ const Index = () => {
           onClose={() => setActiveGame(null)}
         />
       )}
+
+      <AuthDialog
+        open={showAuthDialog}
+        onClose={() => setShowAuthDialog(false)}
+        onLogin={(name, email) => {
+          setUserName(name);
+          setIsLoggedIn(true);
+          toast.success(`Добро пожаловать, ${name}!`);
+        }}
+      />
     </div>
   );
 };
